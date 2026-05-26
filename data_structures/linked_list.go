@@ -11,21 +11,22 @@ type LinkedList struct {
 	Head *Node
 }
 
-func (List *LinkedList) PushFront(num int) {
+func (list *LinkedList) PushForward(number int) {
 	newNode := &Node{
-		Value: num,
-		Next:  List.Head,
+		Value: number,
+		Next:  list.Head,
 	}
-	List.Head = newNode
+
+	list.Head = newNode
 }
 
 func main() {
 	list := LinkedList{}
 
-	list.PushFront(19)
-	list.PushFront(20)
-	list.PushFront(21)
-	list.PushFront(22)
+	list.PushForward(1)
+	list.PushForward(3)
+	list.PushForward(5)
+	list.PushForward(7)
 
 	current := list.Head
 
@@ -33,5 +34,4 @@ func main() {
 		fmt.Println(current)
 		current = current.Next
 	}
-
 }
