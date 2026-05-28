@@ -1,3 +1,4 @@
+// Generator - микропаттерн, который наполняет канал.
 package main
 
 import "fmt"
@@ -14,10 +15,9 @@ func generator() <-chan int {
 }
 
 func main() {
-	chn := generator()
+	intChan := generator()
 
-	fmt.Println(<-chn)
-	fmt.Println(<-chn)
-	fmt.Println(<-chn)
-	fmt.Println(<-chn)
+	for value := range intChan {
+		fmt.Println(value)
+	}
 }
