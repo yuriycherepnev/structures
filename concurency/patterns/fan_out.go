@@ -3,64 +3,49 @@
 один входной канал читается несколькими горутинами, каждая из которых выполняет свою работу независимо.
 Это позволяет утилизировать все ядра процессора и увеличить пропускную способность.
 */
-
 package main
 
 import (
 	"fmt"
-	"net/http"
+	"strconv"
 	"sync"
+	"time"
 )
 
-func worker(id int, tasks <-chan string, results chan<- string, wg *sync.WaitGroup) {
+func worker(workerId int, taskChan <-chan int, resultChan chan<- [2]int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for url := range tasks {
-		resp, err := http.Get(url)
-		if err != nil {
-			results <- string('0')
-			continue
-		}
-		err = resp.Body.Close()
-		if err != nil {
-			return
-		}
-		fmt.Println(id)
-
-		results <- resp.Status
+	for taskId := range taskChan {
+		// some code
+		time.Sleep(time.Second * 1)
+		resultChan <- [2]int{workerId, taskId}
 	}
 }
 
 func main() {
-	urls := []string{
-		"https://google.com",
-		"https://yandex.ru",
-		"https://github.com",
-		"https://stackoverflow.com",
-		"https://golang.org",
-	}
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	taskChan := make(chan int, len(numbers))
+	resultChan := make(chan [2]int, len(numbers))
 
-	tasks := make(chan string, len(urls))
-	results := make(chan string, len(urls))
-
-	numWorkers := 3
 	var wg sync.WaitGroup
-	for i := 1; i <= numWorkers; i++ {
+	for i := 1; i <= 3; i++ {
 		wg.Add(1)
-		go worker(i, tasks, results, &wg)
+		go worker(i, taskChan, resultChan, &wg)
 	}
 
-	for _, url := range urls {
-		tasks <- url
+	for _, number := range numbers {
+		taskChan <- number
 	}
-	close(tasks)
+	close(taskChan)
 
 	go func() {
 		wg.Wait()
-		close(results)
+		close(resultChan)
 	}()
 
-	for length := range results {
-		fmt.Println(length)
+	for result := range resultChan {
+		workerId := strconv.Itoa(result[0])
+		taskId := strconv.Itoa(result[1])
+		fmt.Println("workerId " + workerId + " taskId " + taskId)
 	}
 
 }
