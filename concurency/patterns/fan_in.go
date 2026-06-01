@@ -44,7 +44,7 @@ func main() {
 		go func() {
 			defer close(channel)
 			number := strconv.Itoa(index)
-			channel <- "message " + number + " from channel " + number
+			channel <- "message from channel " + number
 		}()
 	}
 
