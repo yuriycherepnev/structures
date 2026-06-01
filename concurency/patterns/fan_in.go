@@ -9,13 +9,13 @@ import (
 )
 
 func fanIn(channels []chan string) <-chan string {
-	ch := make(chan string)
+	inChan := make(chan string)
 	var wg sync.WaitGroup
 
 	read := func(input <-chan string) {
 		defer wg.Done()
 		for v := range input {
-			ch <- v
+			inChan <- v
 		}
 	}
 
@@ -27,10 +27,10 @@ func fanIn(channels []chan string) <-chan string {
 
 	go func() {
 		wg.Wait()
-		close(ch)
+		close(inChan)
 	}()
 
-	return ch
+	return inChan
 }
 
 func main() {
@@ -40,11 +40,11 @@ func main() {
 		channels[i] = make(chan string)
 	}
 
-	for index, value := range channels {
+	for index, channel := range channels {
 		go func() {
-			defer close(value)
+			defer close(channel)
 			number := strconv.Itoa(index)
-			value <- "message " + number + " from channel " + number
+			channel <- "message " + number + " from channel " + number
 		}()
 	}
 
