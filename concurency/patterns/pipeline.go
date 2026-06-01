@@ -7,18 +7,12 @@ package main
 
 import "fmt"
 
-func main() {
-	prod := producer()
-	cons := producerConsumer(prod)
-	consumer(cons)
-}
-
 func producer() <-chan int {
 	c := make(chan int)
 
 	go func() {
 		for i := 0; i <= 10; i++ {
-			c <- i + 1
+			c <- i
 		}
 		close(c)
 	}()
@@ -31,7 +25,7 @@ func producerConsumer(c <-chan int) <-chan int {
 
 	go func() {
 		for v := range c {
-			out <- v * 2
+			out <- v * v
 		}
 		close(out)
 	}()
@@ -43,4 +37,10 @@ func consumer(ch <-chan int) {
 	for v := range ch {
 		fmt.Println(v)
 	}
+}
+
+func main() {
+	input := producer()                  // 1-й этап: генерируем числа
+	processed := producerConsumer(input) // 2-й этап: обрабатываем
+	consumer(processed)                  // 3-й этап: потребляем результат
 }
