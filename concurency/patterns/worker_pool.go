@@ -12,10 +12,9 @@ import (
 func worker(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	for j := range jobs {
+	for message := range jobs {
 		time.Sleep(1 * time.Second)
-		fmt.Println("job", j)
-		results <- j * j
+		results <- message
 	}
 }
 
@@ -23,11 +22,11 @@ func main() {
 	jobs := make(chan int)
 	results := make(chan int)
 
-	var wg sync.WaitGroup
+	wg := &sync.WaitGroup{}
 
 	for i := 0; i < 3; i++ {
 		wg.Add(1)
-		go worker(jobs, results, &wg)
+		go worker(jobs, results, wg)
 	}
 
 	go func() {
