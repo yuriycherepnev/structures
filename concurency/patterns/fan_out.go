@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func worker(workerId int, taskChan <-chan int, resultChan chan<- [2]int, wg *sync.WaitGroup) {
+func fanWorker(workerId int, taskChan <-chan int, resultChan chan<- [2]int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for taskId := range taskChan {
 		// some code
@@ -29,7 +29,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 1; i <= 3; i++ {
 		wg.Add(1)
-		go worker(i, taskChan, resultChan, &wg)
+		go fanWorker(i, taskChan, resultChan, &wg)
 	}
 
 	for _, number := range numbers {
