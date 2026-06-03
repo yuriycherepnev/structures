@@ -19,9 +19,8 @@ func worker(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 }
 
 func main() {
-	jobs := make(chan int)
-	results := make(chan int)
-
+	jobs := make(chan int, 10)
+	results := make(chan int, 10)
 	wg := &sync.WaitGroup{}
 
 	for i := 0; i < 3; i++ {
