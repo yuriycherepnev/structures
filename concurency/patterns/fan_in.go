@@ -35,7 +35,7 @@ func fanIn(channels []chan string) <-chan string {
 }
 
 func main() {
-	chnCount := 301
+	chnCount := 30
 	channels := make([]chan string, chnCount)
 	for i := 0; i < chnCount; i++ {
 		channels[i] = make(chan string)
