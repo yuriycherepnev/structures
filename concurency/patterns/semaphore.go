@@ -11,24 +11,19 @@ import (
 
 func sWorker(id int, sem chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
-	sem <- struct{}{} // Захват семафора
-	fmt.Printf("Воркер %d начал\n", id)
-	time.Sleep(time.Second)
-	fmt.Printf("Воркер %d завершил\n", id)
-	<-sem // Освобождение семафора
+	sem <- struct{}{}
+	fmt.Println(id)
+	time.Sleep(time.Millisecond * 300)
+	<-sem
 }
 
 func main() {
-	const numWorkers = 5
-	const maxConcurrent = 2
-	sem := make(chan struct{}, maxConcurrent)
+	sem := make(chan struct{}, 2)
 	var wg sync.WaitGroup
-
-	for i := 1; i <= numWorkers; i++ {
+	for i := 1; i <= 5; i++ {
 		wg.Add(1)
 		go sWorker(i, sem, &wg)
 	}
-
 	wg.Wait()
 }
 
