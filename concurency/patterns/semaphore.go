@@ -11,14 +11,12 @@ package main
 import (
 	"fmt"
 	"sync"
-	"time"
 )
 
 func sWorker(id int, sem chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 	sem <- struct{}{}
 	fmt.Println(id)
-	time.Sleep(time.Millisecond * 300)
 	<-sem
 }
 
