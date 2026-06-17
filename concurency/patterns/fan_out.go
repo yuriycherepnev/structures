@@ -17,7 +17,6 @@ import (
 func fanWorker(workerId int, taskChan <-chan int, resultChan chan<- [2]int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for taskId := range taskChan {
-		// some code
 		time.Sleep(time.Second * 1)
 		resultChan <- [2]int{workerId, taskId}
 	}
@@ -49,5 +48,4 @@ func main() {
 		taskId := strconv.Itoa(result[1])
 		fmt.Println("workerId " + workerId + " taskId " + taskId)
 	}
-
 }

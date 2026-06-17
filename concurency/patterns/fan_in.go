@@ -1,57 +1,51 @@
-// Fan-In собирает результаты в единый канал
 // Fan-in - собирает результаты из нескольких каналов в один
 
 package main
 
 import (
 	"fmt"
-	"strconv"
 	"sync"
 )
 
-func fanIn(channels []chan string) <-chan string {
-	inChan := make(chan string)
+func fanIn(channels []chan int) chan int {
 	var wg sync.WaitGroup
-
-	read := func(input <-chan string) {
-		defer wg.Done()
-		for v := range input {
-			inChan <- v
-		}
-	}
-
-	wg.Add(len(channels))
+	results := make(chan int)
 
 	for _, channel := range channels {
-		go read(channel)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for v := range channel {
+				results <- v
+			}
+		}()
 	}
 
 	go func() {
 		wg.Wait()
-		close(inChan)
+		close(results)
 	}()
 
-	return inChan
+	return results
 }
 
 func main() {
 	chnCount := 30
-	channels := make([]chan string, chnCount)
+	channels := make([]chan int, chnCount)
 	for i := 0; i < chnCount; i++ {
-		channels[i] = make(chan string)
+		channels[i] = make(chan int)
 	}
 
 	for index, channel := range channels {
 		go func() {
 			defer close(channel)
-			number := strconv.Itoa(index)
-			channel <- "message from channel " + number
+			channel <- index
 		}()
 	}
 
-	out := fanIn(channels)
+	results := fanIn(channels)
 
-	for msg := range out {
+	for msg := range results {
 		fmt.Println(msg)
 	}
 }
