@@ -26,5 +26,4 @@ func main() {
 	for result := range ch {
 		fmt.Println(result)
 	}
-	
 }
