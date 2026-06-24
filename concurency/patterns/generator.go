@@ -12,7 +12,7 @@ func generator() <-chan int {
 
 	go func() {
 		for i := 0; i <= 10; i++ {
-			ch <- i + 1
+			ch <- i
 		}
 		close(ch)
 	}()
@@ -27,3 +27,15 @@ func main() {
 		fmt.Println(result)
 	}
 }
+
+/*
+алгоритм создания паттерна:
+generator
+1. создаем канал
+2. из горутины пушим данные в канал через for + закрываем канал через defer
+3. возвращаем канал
+
+main
+1. вызываем generator
+2. читаем данные из канала
+*/

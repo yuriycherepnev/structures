@@ -5,8 +5,9 @@ Pipeline - данные обрабатываются цепочкой. Producer 
 Реальный сценарий: Система обработки изображений,
 где изображение проходит через этапы масштабирования,
 фильтрации и кодирования.
-*/
 
+producer - это паттерн генератор
+*/
 package main
 
 import "fmt"
@@ -15,7 +16,7 @@ func producer() <-chan int {
 	c := make(chan int)
 
 	go func() {
-		for i := 0; i <= 10; i++ {
+		for i := 1; i <= 10; i++ {
 			c <- i
 		}
 		close(c)
@@ -44,7 +45,7 @@ func consumer(ch <-chan int) {
 }
 
 func main() {
-	input := producer()                  // 1-й этап: генерируем числа
-	processed := producerConsumer(input) // 2-й этап: обрабатываем
-	consumer(processed)                  // 3-й этап: потребляем результат
+	input := producer()
+	processed := producerConsumer(input)
+	consumer(processed)
 }
