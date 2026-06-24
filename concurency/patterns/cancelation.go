@@ -6,10 +6,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 )
 
-func cancelWorker(ctx context.Context) {
+func cancelWorker(wg *sync.WaitGroup, ctx context.Context) {
+	defer wg.Done()
 	for {
 		select {
 		case <-ctx.Done():
@@ -23,10 +25,12 @@ func cancelWorker(ctx context.Context) {
 }
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	go cancelWorker(ctx)
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
-	time.Sleep(1 * time.Second)
-	cancel()
-	time.Sleep(1 * time.Second)
+	wg.Add(1)
+	go cancelWorker(wg, ctx)
+
+	wg.Wait()
 }
