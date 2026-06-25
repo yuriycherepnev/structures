@@ -12,15 +12,18 @@ import (
 
 func cancelWorker(wg *sync.WaitGroup, ctx context.Context) {
 	defer wg.Done()
-	for {
-		select {
-		case <-ctx.Done():
-			fmt.Println("Done")
-			return
-		default:
-			fmt.Println("Working...")
-			time.Sleep(500 * time.Millisecond)
-		}
+	ch := make(chan int)
+	go func() {
+		time.Sleep(5 * time.Second)
+		close(ch)
+	}()
+	select {
+	case <-ch:
+		fmt.Println("work done")
+		return
+	case <-ctx.Done():
+		fmt.Println("cancel context")
+		return
 	}
 }
 
