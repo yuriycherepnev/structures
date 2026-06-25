@@ -25,9 +25,9 @@ func cancelWorker(wg *sync.WaitGroup, ctx context.Context) {
 }
 
 func main() {
-	wg := &sync.WaitGroup{}
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+	wg := &sync.WaitGroup{}
 
 	wg.Add(1)
 	go cancelWorker(wg, ctx)
