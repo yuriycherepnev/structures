@@ -17,9 +17,9 @@ import (
 func worker(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	for message := range jobs {
+	for job := range jobs {
 		time.Sleep(1 * time.Second)
-		results <- message
+		results <- job
 	}
 }
 
